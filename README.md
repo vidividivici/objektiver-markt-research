@@ -31,6 +31,11 @@ Das Plugin bringt einen kleinen Server mit (`markt-research`), der Amazon.de- un
 - Der Server läuft bei Cloudflare (Cloudflare Workers).
 - Sonst speichert der Skill nichts.
 
+Vollständige Datenschutzerklärung: https://markt-research-mcp.vvv-tools.workers.dev/datenschutz
+
+## Anbieter
+Veni Vidi Validus GmbH, Kempten (Allgäu) – [Impressum](https://markt-research-mcp.vvv-tools.workers.dev/impressum)
+
 ## Hinweis
 Preise und Verfügbarkeit sind Momentaufnahmen. Keine medizinische Beratung.
 

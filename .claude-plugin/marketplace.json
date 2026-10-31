@@ -1,0 +1,14 @@
+{
+  "name": "objektiver-markt-research",
+  "description": "Objektiver Preis-Leistungs-Vergleich für Drogerie-, Haushalts- und Gesundheitsprodukte – gleiches Ergebnis, günstiger.",
+  "owner": {
+    "name": "VVV"
+  },
+  "plugins": [
+    {
+      "name": "objektiver-markt-research",
+      "source": "./",
+      "description": "Findet zu einem Produkt (Screenshot oder Name) eine objektiv gleichwertige, günstigere Alternative – gleiches Endergebnis statt gleicher Marke – auf Amazon.de und im Laden, inkl. Sicherheits- und Echtheitscheck."
+    }
+  ]
+}

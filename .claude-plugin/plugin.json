@@ -1,0 +1,9 @@
+{
+  "name": "objektiver-markt-research",
+  "version": "1.0.0",
+  "description": "Findet zu einem Produkt (Screenshot oder Name) eine objektiv gleichwertige, günstigere Alternative – gleiches Endergebnis statt gleicher Marke – auf Amazon.de und im Laden, inkl. Sicherheits- und Echtheitscheck.",
+  "author": {
+    "name": "VVV"
+  },
+  "keywords": ["preisvergleich", "einkaufen", "drogerie", "amazon", "dm", "deutsch"]
+}

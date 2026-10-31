@@ -1,10 +1,11 @@
 {
   "name": "objektiver-markt-research",
   "displayName": "Objektiver Markt-Research",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Findet zu einem Produkt (Screenshot oder Name) eine objektiv gleichwertige, günstigere Alternative – gleiches Endergebnis statt gleicher Marke – auf Amazon.de und im Laden, inkl. Sicherheits- und Echtheitscheck.",
   "author": {
-    "name": "VVV"
+    "name": "Veni Vidi Validus GmbH",
+    "email": "help@voiceappear.de"
   },
   "homepage": "https://github.com/vidividivici/objektiver-markt-research",
   "repository": "https://github.com/vidividivici/objektiver-markt-research",

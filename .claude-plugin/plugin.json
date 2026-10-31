@@ -1,9 +1,23 @@
 {
   "name": "objektiver-markt-research",
+  "displayName": "Objektiver Markt-Research",
   "version": "1.0.0",
   "description": "Findet zu einem Produkt (Screenshot oder Name) eine objektiv gleichwertige, günstigere Alternative – gleiches Endergebnis statt gleicher Marke – auf Amazon.de und im Laden, inkl. Sicherheits- und Echtheitscheck.",
   "author": {
     "name": "VVV"
   },
-  "keywords": ["preisvergleich", "einkaufen", "drogerie", "amazon", "dm", "deutsch"]
+  "homepage": "https://github.com/vidividivici/objektiver-markt-research",
+  "repository": "https://github.com/vidividivici/objektiver-markt-research",
+  "documentationUrl": "https://github.com/vidividivici/objektiver-markt-research#readme",
+  "supportUrl": "https://github.com/vidividivici/objektiver-markt-research/issues",
+  "privacyPolicyUrl": "https://github.com/vidividivici/objektiver-markt-research#datenschutz",
+  "license": "MIT",
+  "keywords": [
+    "preisvergleich",
+    "einkaufen",
+    "drogerie",
+    "amazon",
+    "dm",
+    "deutsch"
+  ]
 }

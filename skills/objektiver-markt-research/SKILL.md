@@ -9,9 +9,15 @@ Der Nutzer zeigt ein Produkt (meist Screenshot aus Amazon- oder dm-App) und will
 
 ## Nutzerkontext
 - Zu Beginn einmal kurz fragen, falls nicht bekannt: **Postleitzahl** (für Lieferzeiten) und ob Amazon Prime vorhanden ist. Ohne Antwort: ohne PLZ suchen und Lieferzeiten als „bundesweit, ungefähr“ kennzeichnen.
-- Kauft ggf. auch bei dm/Rossmann vor Ort.
+- Verglichen wird **Amazon.de und dm** (online und Filiale).
 - Antwort kurz und klar auf Deutsch (mobil lesbar), mit Tabelle und klarer Empfehlung.
 - Es wird weitergesucht, bis eine belastbare Antwort steht – keine halben Aussagen.
+
+## Datenquellen
+Das Plugin bringt einen eigenen Server **markt-research** mit (Tools `dm_search`, `amazon_search`, `amazon_product_details`, `amazon_critical_reviews`, `get_run_result`). Der Nutzer braucht dafür kein eigenes Konto. Die Kosten trägt der Betreiber – deshalb sparsam:
+- Pro Produktanfrage höchstens: 1× `amazon_search`, 1× `amazon_product_details`, 1× `amazon_critical_reviews` (nur für den Top-Pick), dazu beliebig `dm_search`.
+- Antwortet ein Tool mit `status: "running"`, `get_run_result` mit der `run_id` aufrufen (ggf. mehrmals).
+- Meldet ein Tool `status: "limit"` oder ist der Server nicht verfügbar: mit normaler Websuche weitermachen (Abruf von amazon.de-/dm.de-Seiten, idealo, geizhals) und Lieferzeiten als „ungeprüft“ kennzeichnen.
 
 ## Ablauf
 
@@ -25,20 +31,15 @@ Aus Screenshot/Name ermitteln: Wirkstoffe/Zusammensetzung, Menge, Preis, Grundpr
 
 Wenn der Nutzer frühere Erfahrungen nennt (z. B. „ohne Soja hat ekelhaft geschmeckt“), Inhaltsstoffe des Originals recherchieren und Alternativen danach filtern.
 
-### 2. Ladenpreis-Referenz
-Websuche für dm, Rossmann, REWE, Knuspr. Prüfen, ob es eine Eigenmarke gibt, die objektiv gleich ist (z. B. dm Sundance, ebelin, Balea).
+### 2. dm-Referenz
+`dm_search` mit 1–2 Suchbegriffen. Prüfen, ob es eine dm-Eigenmarke gibt, die objektiv gleich ist (z. B. Sundance, ebelin, Balea, Mivolis, Dontodent). Grundpreis aus `unitPrice` übernehmen.
 
 ### 3. Amazon-Scan
+**Breit:** `amazon_search` mit 3–4 Suchbegriffen (Hauptbegriff, Synonym, ggf. Bulk/Vorratspack), `max_per_query` 30; bei vielen Billigangeboten zusätzlich `sort_by_reviews: true`.
 
-**Ohne Apify (Standard):** Websuche und Abruf von amazon.de-Suchergebnissen und Produktseiten sowie Preisvergleichen (idealo, geizhals). Lieferzeiten dann als „ungeprüft“ kennzeichnen.
+Achtung: `price.value` aus der Suche ist oft mit dem Grundpreis verklebt (z. B. `14704.9` = 14,70 € und 4,90 €/l). Erste Ziffern = Preis, Rest = Grundpreis. Verlässliche Preise liefern erst die Details.
 
-**Mit Apify (nur wenn der Nutzer den Apify-Connector verbunden hat):** Tools laden: `ToolSearch select:mcp__Apify__call-actor,mcp__Apify__get-dataset-items,mcp__Apify__get-actor-run`
-
-**Breit (ohne Postleitzahl):** `junglee/amazon-crawler`, 3–4 Such-URLs (Hauptbegriff, Synonym, `&s=review-rank`, ggf. Bulk/Vorratspack), `maxItemsPerStartUrl: 30`, `scrapeProductDetails: false`, `language: de`, `waitSecs: 45`. Felder: `asin,title,price.value,stars,reviewsCount,isSponsored`.
-
-Achtung: `price.value` aus der Suche ist oft mit dem Grundpreis verklebt (z. B. `14704.9` = 14,70 € und 4,90 €/l). Erste Ziffern = Preis, Rest = Grundpreis.
-
-**Shortlist (8–12)** nach Gleichwertigkeit und Preis pro Einheit, dann **Details mit PLZ des Nutzers:** gleiche Actor, Produkt-URLs, `scrapeProductDetails: true`, `zipCode: "<PLZ>"`, `locationDeliverableRoutes: ["PRODUCT"]` (nie `countryCode` dazu). Felder: `asin,title,price.value,listPrice.value,stars,reviewsCount,inStockText,delivery,fastestDelivery,seller.name,monthlyPurchaseVolume,features,attributes,aiReviewsSummary.text,starsBreakdown.1star`.
+**Shortlist (8–12)** nach Gleichwertigkeit und Preis pro Einheit, dann `amazon_product_details` mit diesen ASINs und – falls bekannt – `plz` des Nutzers.
 
 - **Verfügbarkeit immer prüfen:** „versandfertig in 1–2 Monaten“ ist ein K.-o.-Kriterium und muss dem Nutzer gesagt werden (auch beim Originalprodukt!).
 - `fastestDelivery` ≈ Prime-Datum; die Abfrage ist nicht eingeloggt, Prime ist oft schneller – so formulieren.
@@ -55,11 +56,11 @@ Achtung: `price.value` aus der Suche ist oft mit dem Grundpreis verklebt (z. B. 
 - Hersteller/Importeur mit EU-Adresse? Eigener Shop mit Impressum? Händlerbund o. Ä.?
 - Laborzertifikate/Analysezertifikat (Datum!), HACCP/GMP, Listungen
 - Rückrufe (lebensmittelwarnung.de) suchen
-- Kritische Amazon-Bewertungen auf wiederkehrende Probleme prüfen (mit Apify: `scrape.badger/amazon-reviews-scraper`, `star: critical`, `verified_only: true`; sonst die kritischen Bewertungen auf der Produktseite lesen)
+- Kritische Amazon-Bewertungen des Top-Picks mit `amazon_critical_reviews` auf wiederkehrende Probleme prüfen (ohne Server: kritische Bewertungen auf der Produktseite lesen)
 - Gesundheitliche Unterschiede zum Original benennen (z. B. Allergene, Duftstoffe, fehlende Rückfetter)
 
 ### 6. Antwort
-1. **Top-Pick** in einem Satz mit Preis und Ersparnis in % bzw. pro Einheit, Link `https://www.amazon.de/dp/ASIN` oder Laden-Link
+1. **Top-Pick** in einem Satz mit Preis und Ersparnis in % bzw. pro Einheit, Link `https://www.amazon.de/dp/ASIN` oder dm-Link
 2. **Warum objektiv gleich** – mit unabhängigem Beleg
 3. **Tabelle** (5–7 Zeilen): Produkt, Preis, Preis/Einheit, entscheidendes Kriterium, Bewertung, Lieferung; Original als letzte Zeile zum Vergleich
 4. **Ehrlicher Unterschied** zum Original (was fehlt, was nur Eigenangabe ist)
@@ -70,9 +71,9 @@ Achtung: `price.value` aus der Suche ist oft mit dem Grundpreis verklebt (z. B. 
 **Wenn das Original schon das günstigste Gleichwertige ist, klar sagen: „Bleib dabei“** – nicht künstlich etwas empfehlen.
 
 ## Regeln
-- Kein Shop und keine Marke wird bevorzugt. Ist der günstigste gleichwertige Kauf im Laden vor Ort, ist das der Top-Pick.
+- Kein Shop und keine Marke wird bevorzugt. Ist der günstigste gleichwertige Kauf bei dm, ist das der Top-Pick.
 - Niemals Wirksamkeit oder Gleichwertigkeit behaupten, die nicht belegt ist. Lieber weitersuchen.
 - Preis pro *wirksamer Einheit* vergleichen (pro Liter, pro kg Protein, pro Stück), nicht pro Packung.
 - Liefer- und Lagerstatus des Originals mitprüfen.
 - Links immer als saubere Produktlinks ohne Tracking-Parameter ausgeben.
-- Budget mit Apify: ca. 3–4 Actor-Runs pro Produkt.
+- Server-Tools sparsam nutzen (siehe Datenquellen); Ergebnisse werden einige Stunden gecacht.

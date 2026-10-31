@@ -14,8 +14,8 @@ Der Nutzer zeigt ein Produkt (meist Screenshot aus Amazon- oder dm-App) und will
 - Es wird weitergesucht, bis eine belastbare Antwort steht – keine halben Aussagen.
 
 ## Datenquellen
-Das Plugin bringt einen eigenen Server **markt-research** mit (Tools `dm_search`, `amazon_search`, `amazon_product_details`, `amazon_critical_reviews`, `get_run_result`). Der Nutzer braucht dafür kein eigenes Konto. Die Kosten trägt der Betreiber – deshalb sparsam:
-- Pro Produktanfrage höchstens: 1× `amazon_search`, 1× `amazon_product_details`, 1× `amazon_critical_reviews` (nur für den Top-Pick), dazu beliebig `dm_search`.
+Das Plugin bringt einen eigenen Server **markt-research** mit (Tools `dm_search`, `dm_store_stock`, `amazon_search`, `amazon_product_details`, `amazon_critical_reviews`, `get_run_result`). Der Nutzer braucht dafür kein eigenes Konto. Die Kosten trägt der Betreiber – deshalb sparsam:
+- Pro Produktanfrage höchstens: 1× `amazon_search`, 1× `amazon_product_details`, 1× `amazon_critical_reviews` (nur für den Top-Pick), dazu `dm_search` und `dm_store_stock` nach Bedarf (kostenlos).
 - Antwortet ein Tool mit `status: "running"`, `get_run_result` mit der `run_id` aufrufen (ggf. mehrmals).
 - Meldet ein Tool `status: "limit"` oder ist der Server nicht verfügbar: mit normaler Websuche weitermachen (Abruf von amazon.de-/dm.de-Seiten, idealo, geizhals) und Lieferzeiten als „ungeprüft“ kennzeichnen.
 
@@ -34,15 +34,15 @@ Wenn der Nutzer frühere Erfahrungen nennt (z. B. „ohne Soja hat ekelhaft gesc
 ### 2. dm-Referenz
 `dm_search` mit 1–2 Suchbegriffen. Prüfen, ob es eine dm-Eigenmarke gibt, die objektiv gleich ist (z. B. Sundance, ebelin, Balea, Mivolis, Dontodent). Grundpreis aus `unitPrice` übernehmen.
 
+Kommt ein dm-Produkt als Top-Pick oder Alternative in Frage und ist die PLZ bekannt: `dm_store_stock` mit der PLZ und den `dan`-Nummern (bis zu 10) aufrufen. Dann in der Antwort sagen, in welchem nahen Markt (Straße, Entfernung) es gerade wie oft vorrätig ist.
+
 ### 3. Amazon-Scan
-**Breit:** `amazon_search` mit 3–4 Suchbegriffen (Hauptbegriff, Synonym, ggf. Bulk/Vorratspack), `max_per_query` 30; bei vielen Billigangeboten zusätzlich `sort_by_reviews: true`.
+**Breit:** `amazon_search` mit 3–4 Suchbegriffen (Hauptbegriff, Synonym, ggf. Bulk/Vorratspack), `max_per_query` 30, `plz` falls bekannt; bei vielen Billigangeboten `sort_by: "average_review"`.
 
-Achtung: `price.value` aus der Suche ist oft mit dem Grundpreis verklebt (z. B. `14704.9` = 14,70 € und 4,90 €/l). Erste Ziffern = Preis, Rest = Grundpreis. Verlässliche Preise liefern erst die Details.
-
-**Shortlist (8–12)** nach Gleichwertigkeit und Preis pro Einheit, dann `amazon_product_details` mit diesen ASINs und – falls bekannt – `plz` des Nutzers.
+**Shortlist (8–12)** nach Gleichwertigkeit und Preis pro Einheit, dann `amazon_product_details` mit diesen ASINs und – falls bekannt – `plz` des Nutzers. Die Details enthalten Grundpreis (`pricePerUnit`), Lagerstatus, Lieferdaten, Verkäufer, Sterneverteilung und die Top-Bewertungen der Produktseite.
 
 - **Verfügbarkeit immer prüfen:** „versandfertig in 1–2 Monaten“ ist ein K.-o.-Kriterium und muss dem Nutzer gesagt werden (auch beim Originalprodukt!).
-- `fastestDelivery` ≈ Prime-Datum; die Abfrage ist nicht eingeloggt, Prime ist oft schneller – so formulieren.
+- In `delivery` ist „schnellste Lieferung“ ≈ Prime-Datum; die Abfrage ist nicht eingeloggt, Prime ist oft schneller – so formulieren.
 - Gesponserte Treffer (`isSponsored`) nicht bevorzugen; sie zählen nur nach denselben Kriterien wie alle anderen.
 
 ### 4. Objektiv verifizieren (extern, nicht nur Amazon)

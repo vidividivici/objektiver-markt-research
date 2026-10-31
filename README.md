@@ -21,12 +21,12 @@ Kein Shop und keine Marke wird bevorzugt.
 - **Manuell:** Den Ordner `skills/objektiver-markt-research` als ZIP in Claude unter *Anpassen → Skills → + → Skill hochladen* hochladen.
 
 ## Live-Daten ohne eigenes Konto
-Das Plugin bringt einen kleinen Server mit (`markt-research`), der Amazon.de- und dm.de-Daten abruft. Du brauchst dafür kein eigenes Konto und zahlst nichts. Es gibt ein Tages- und Monatslimit; ist es erreicht, nutzt der Skill automatisch die normale Websuche.
+Das Plugin bringt einen kleinen Server mit (`markt-research`), der Amazon.de-Preise, Lieferzeiten und Bewertungen sowie dm.de-Produkte und den Bestand in dm-Märkten in deiner Nähe abruft. Du brauchst dafür kein eigenes Konto und zahlst nichts. Es gibt ein Tages- und Monatslimit; ist es erreicht, nutzt der Skill automatisch die normale Websuche.
 
 ## Datenschutz
-- An den Server gehen nur Suchbegriffe, Amazon-Produktnummern (ASIN) und – wenn du sie nennst – deine Postleitzahl für die Lieferzeit.
-- Amazon-Abfragen laufen über den Dienstleister Apify (Apify Technologies s.r.o., Prag), der die öffentlichen Amazon.de-Seiten abruft. dm-Abfragen gehen direkt an die öffentliche dm-Produktsuche.
-- Ergebnisse werden bis zu 6 Stunden zwischengespeichert, damit gleiche Anfragen nichts kosten.
+- An den Server gehen nur Suchbegriffe, Produktnummern (Amazon-ASIN, dm-Artikelnummer) und – wenn du sie nennst – deine Postleitzahl für Lieferzeit und nahe dm-Märkte.
+- Amazon-Suchen und -Produktseiten ruft der Dienstleister Oxylabs (Oxylabs, UAB, Vilnius) ab, kritische Bewertungen der Dienstleister Apify (Apify Technologies s.r.o., Prag). dm-Abfragen gehen direkt an die öffentliche dm-Produktsuche und den offiziellen KI-Server von dm.
+- Ergebnisse werden zwischengespeichert (1 Stunde bis 7 Tage, je nach Art), damit gleiche Anfragen nichts kosten.
 - Für die Limits wird deine IP-Adresse nur als gesalzener Hash gespeichert und nach 2 Tagen gelöscht. Suchbegriffe und Postleitzahlen werden nicht protokolliert.
 - Der Server läuft bei Cloudflare (Cloudflare Workers).
 - Sonst speichert der Skill nichts.
